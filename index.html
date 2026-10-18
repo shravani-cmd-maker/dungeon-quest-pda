@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dungeon Quest — Game Level Progression Using a Pushdown Automaton (PDA)</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ==================================================================== -->
+  <!-- TOP APP HEADER                                                       -->
+  <!-- ==================================================================== -->
+  <header class="top-header">
+    <div class="header-brand">
+      <!-- Castle Tower Icon -->
+      <div class="castle-icon-wrap" aria-hidden="true">
+        <svg class="castle-icon" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M2 4h3v3h2V4h3v3h2V4h3v3h2V4h5v8h-1v9H3v-9H2V4zm3 15h4v-5H5v5zm6 0h4v-5h-4v5zm6 0h2v-7H5v7h2v-3h10v3z"/>
+        </svg>
+      </div>
+      <h1 class="header-title">Dungeon Quest</h1>
+      <span class="header-divider">|</span>
+      <span class="header-subtitle">Game Level Progression Using a Pushdown Automaton (PDA)</span>
+    </div>
+
+    <div class="header-right">
+      <div class="pill-badge toc-badge">TOC – FA-2</div>
+      <button id="btnHeaderReset" class="pill-btn btn-reset-header" title="Reset automaton and game (Key: R)">
+        <svg class="icon-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.19"/>
+        </svg>
+        Reset
+      </button>
+    </div>
+  </header>
+
+  <!-- ==================================================================== -->
+  <!-- MAIN WORKSPACE: 52% GAME | 48% PDA SIMULATOR                         -->
+  <!-- ==================================================================== -->
+  <main class="main-container">
+
+    <!-- ------------------------------------------------------------------ -->
+    <!-- LEFT PANEL: DUNGEON GAME (52%)                                     -->
+    <!-- ------------------------------------------------------------------ -->
+    <section class="panel-card panel-game">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <!-- Gamepad Icon -->
+          <svg class="panel-icon game-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19.5 6h-15A2.5 2.5 0 0 0 2 8.5v7A2.5 2.5 0 0 0 4.5 18h.8l1.4 2.3c.4.6 1.1 1 1.8 1h.5c.9 0 1.6-.6 1.8-1.5L10.7 18h2.6l.7 1.8c.2.9.9 1.5 1.8 1.5h.5c.7 0 1.4-.4 1.8-1l1.4-2.3h.8a2.5 2.5 0 0 0 2.5-2.5v-7A2.5 2.5 0 0 0 19.5 6zm-11 7H7v1.5a.5.5 0 0 1-1 0V13H4.5a.5.5 0 0 1 0-1H6v-1.5a.5.5 0 0 1 1 0V12h1.5a.5.5 0 0 1 0 1zm8-1a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm2 2a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+          </svg>
+          <h2 class="panel-heading">Dungeon Game</h2>
+        </div>
+
+        <!-- Location & Depth Badge -->
+        <div class="location-depth-badge" id="locationBadge">
+          <div class="badge-line">Location: <span id="locName" class="val-highlight">Outside</span></div>
+          <div class="badge-line">Depth: <span id="depthVal" class="val-highlight">0</span></div>
+        </div>
+      </div>
+
+      <!-- Canvas Area with In-Game Toast Overlay -->
+      <div class="canvas-viewport" id="canvasViewport">
+        <canvas id="dungeonCanvas" width="546" height="442"></canvas>
+        <div class="game-toast" id="gameToast"></div>
+
+        <!-- On-Screen Mini D-Pad for Touch/Mouse Movement -->
+        <div class="on-screen-dpad" id="onScreenDpad" title="Click or tap to move hero">
+          <button class="dpad-btn dpad-up" data-dir="up" aria-label="Move Up">▲</button>
+          <div class="dpad-mid">
+            <button class="dpad-btn dpad-left" data-dir="left" aria-label="Move Left">◀</button>
+            <div class="dpad-center"></div>
+            <button class="dpad-btn dpad-right" data-dir="right" aria-label="Move Right">▶</button>
+          </div>
+          <button class="dpad-btn dpad-down" data-dir="down" aria-label="Move Down">▼</button>
+        </div>
+      </div>
+
+      <!-- 4 Main Action Buttons matching Reference Image -->
+      <div class="game-actions-row">
+        <!-- 1. Enter Room (A) - Teal -->
+        <button id="btnEnter" class="btn-action btn-enter" title="Enter room (Shortcut: A)">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-8 14H7v-2h4v2zm0-4H7v-2h4v2zm0-4H7V7h4v2zm7 8h-4V7h4v10z"/>
+          </svg>
+          <span>Enter Room <strong class="key-hint">(A)</strong></span>
+        </button>
+
+        <!-- 2. Exit Room (B) - Warm Amber -->
+        <button id="btnExit" class="btn-action btn-exit" title="Exit room (Shortcut: B)">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
+          </svg>
+          <span>Exit Room <strong class="key-hint">(B)</strong></span>
+        </button>
+
+        <!-- 3. Finish (F) - Purple -->
+        <button id="btnFinish" class="btn-action btn-finish" title="Finish game outside (Shortcut: F)">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6h-5.6z"/>
+          </svg>
+          <span>Finish <strong class="key-hint">(F)</strong></span>
+        </button>
+
+        <!-- 4. Reset (R) - Slate -->
+        <button id="btnReset" class="btn-action btn-reset" title="Reset game and automaton (Shortcut: R)">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.19"/>
+          </svg>
+          <span>Reset <strong class="key-hint">(R)</strong></span>
+        </button>
+      </div>
+
+      <!-- Quick Hint Bar -->
+      <div class="panel-footer-hint">
+        <span>🎮 <strong>Controls:</strong> WASD or Arrow Keys to move • Walk to doorways or click buttons</span>
+      </div>
+    </section>
+
+    <!-- ------------------------------------------------------------------ -->
+    <!-- RIGHT PANEL: PDA SIMULATOR (48%)                                   -->
+    <!-- ------------------------------------------------------------------ -->
+    <section class="panel-card panel-pda">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <!-- Gear Icon -->
+          <svg class="panel-icon gear-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+          </svg>
+          <h2 class="panel-heading">PDA Simulator</h2>
+        </div>
+      </div>
+
+      <!-- Top Row: 3 Equal Metric Cards -->
+      <div class="metrics-row">
+        <!-- 1. Current State (Soft Cyan) -->
+        <div class="metric-card metric-cyan">
+          <div class="metric-label">Current State</div>
+          <div class="metric-val-large state-text" id="dispState">q₀</div>
+        </div>
+
+        <!-- 2. Current Input (Pale Grey) -->
+        <div class="metric-card metric-grey">
+          <div class="metric-label">Current Input</div>
+          <div class="metric-val-large input-text" id="dispInput">-</div>
+        </div>
+
+        <!-- 3. Latest Operation (Soft Amber) -->
+        <div class="metric-card metric-amber">
+          <div class="metric-label">Latest Operation</div>
+          <div class="metric-val-large op-text" id="dispOp">READY</div>
+        </div>
+      </div>
+
+      <!-- Middle Section: Stack (Left) & Transition/Sequence (Right) -->
+      <div class="pda-mid-grid">
+        <!-- Left: Stack Column -->
+        <div class="stack-column-card">
+          <div class="subcard-title">Stack <span class="dim">(Top → Bottom)</span></div>
+          <div class="stack-visual-wrap">
+            <div class="stack-top-pointer">Top →</div>
+            <div class="stack-brackets" id="stackBracket">
+              <!-- Rendered via JS -->
+              <div class="stack-cell cell-empty"></div>
+              <div class="stack-cell cell-empty"></div>
+              <div class="stack-cell cell-empty"></div>
+              <div class="stack-cell cell-base">Z₀</div>
+            </div>
+          </div>
+          <div class="stack-str-tag">Stack String: <strong id="dispStackStr">Z₀</strong></div>
+        </div>
+
+        <!-- Right: Transition Applied + Input Sequence -->
+        <div class="rules-column-card">
+          <!-- Transition Applied -->
+          <div class="rule-box">
+            <div class="subcard-title">Transition Applied</div>
+            <div class="math-formula" id="dispFormula">
+              δ(q₀, ε, Z₀) = Initial State
+            </div>
+          </div>
+
+          <!-- Input Sequence -->
+          <div class="sequence-box">
+            <div class="subcard-title">Input Sequence</div>
+            <div class="sequence-row" id="dispSequence">
+              <span class="seq-pill empty">-</span>
+              <span class="seq-pill empty">-</span>
+              <span class="seq-pill empty">-</span>
+              <span class="seq-pill empty">-</span>
+              <span class="seq-pill empty">-</span>
+              <span class="seq-pill empty">-</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Section: Transition History Table -->
+      <div class="history-card">
+        <div class="subcard-title">Transition History</div>
+        <div class="history-table-container">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th style="width: 50px;">Step</th>
+                <th style="width: 120px;">Action</th>
+                <th style="width: 70px;">Input</th>
+                <th style="width: 120px;">From → To</th>
+                <th>Stack (after)</th>
+              </tr>
+            </thead>
+            <tbody id="historyTbody">
+              <!-- Dynamically populated rows -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Rejection Alert Toast -->
+  <div class="rejection-alert" id="rejectionAlert">
+    <div class="alert-icon">⚠️</div>
+    <div class="alert-body">
+      <div class="alert-title">Transition Undefined</div>
+      <div class="alert-text" id="alertText">The machine halts. State and stack remain unmodified.</div>
+    </div>
+    <button class="alert-close" id="alertClose">&times;</button>
+  </div>
+
+  <!-- Scripts -->
+  <script src="pda.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

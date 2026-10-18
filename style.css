@@ -1,0 +1,828 @@
+/* ==========================================================================
+   Dungeon Quest: Pushdown Automaton Simulation
+   Exact Pixel-Perfect Reference Design CSS
+   ========================================================================== */
+
+:root {
+  /* Color Palette matching Reference Image */
+  --bg-app: #EBF1F6;
+  --panel-bg: #FFFFFF;
+  --panel-border: #D3DEE8;
+  --text-primary: #1E293B;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+  --text-faint: #94A3B8;
+
+  /* Button & Status Accents */
+  --color-teal: #148A85;
+  --color-teal-hover: #0F736F;
+  --color-amber: #D69E2E;
+  --color-amber-hover: #B7791F;
+  --color-purple: #7C7BA8;
+  --color-purple-hover: #696894;
+  --color-slate: #8CA0B4;
+  --color-slate-hover: #75899D;
+
+  /* Metric Card Backgrounds */
+  --cyan-card-bg: #E0F2FE;
+  --cyan-card-border: #BAE6FD;
+  --cyan-card-text: #0284C7;
+
+  --grey-card-bg: #F1F5F9;
+  --grey-card-border: #E2E8F0;
+  --grey-card-text: #1E293B;
+
+  --amber-card-bg: #FEF3C7;
+  --amber-card-border: #FDE68A;
+  --amber-card-text: #B45309;
+
+  /* Fonts */
+  --font-serif: 'Cinzel', 'Georgia', serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ==========================================================================
+   TOP HEADER
+   ========================================================================== */
+.top-header {
+  max-width: 1340px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 14px 20px 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.castle-icon-wrap {
+  width: 32px;
+  height: 32px;
+  color: #486581;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.castle-icon {
+  width: 28px;
+  height: 28px;
+}
+
+.header-title {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  font-weight: 700;
+  color: #1E3A5F;
+  letter-spacing: 0.2px;
+}
+
+.header-divider {
+  font-size: 20px;
+  color: #94A3B8;
+  font-weight: 300;
+  margin: 0 4px;
+}
+
+.header-subtitle {
+  font-size: 14px;
+  font-weight: 500;
+  color: #5A6B82;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pill-badge {
+  background-color: #E2E8F0;
+  color: #334155;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid #CBD5E1;
+  letter-spacing: 0.3px;
+}
+
+.pill-btn {
+  background-color: #E2E8F0;
+  color: #1E293B;
+  border: 1px solid #CBD5E1;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 16px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pill-btn:hover {
+  background-color: #CBD5E1;
+  transform: translateY(-1px);
+}
+
+.pill-btn:active {
+  transform: translateY(0);
+}
+
+.icon-refresh {
+  width: 14px;
+  height: 14px;
+}
+
+/* ==========================================================================
+   MAIN TWO-PANEL WORKSPACE
+   ========================================================================== */
+.main-container {
+  max-width: 1340px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 4px 20px 16px 20px;
+  display: flex;
+  gap: 16px;
+  flex: 1;
+}
+
+.panel-card {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-game {
+  flex: 1.08; /* ~52% width */
+}
+
+.panel-pda {
+  flex: 0.92; /* ~48% width */
+}
+
+/* Panel Headers */
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  min-height: 38px;
+}
+
+.panel-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.panel-icon {
+  width: 22px;
+  height: 22px;
+  color: #486581;
+}
+
+.panel-heading {
+  font-size: 17.5px;
+  font-weight: 700;
+  color: #1E293B;
+}
+
+/* Location & Depth Badge */
+.location-depth-badge {
+  background-color: #F1F5F9;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-size: 12px;
+  color: #475569;
+  line-height: 1.35;
+  text-align: right;
+}
+
+.val-highlight {
+  font-weight: 700;
+  color: #1E293B;
+}
+
+/* ==========================================================================
+   CANVAS VIEWPORT & IN-GAME OVERLAYS
+   ========================================================================== */
+.canvas-viewport {
+  position: relative;
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #334155;
+  background-color: #1E293B;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+#dungeonCanvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 546 / 422;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* In-Game Floating Message Toast */
+.game-toast {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(4px);
+  color: #F8FAFC;
+  padding: 7px 16px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+  opacity: 0;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 10;
+}
+
+.game-toast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* On-Screen Touch / Mouse Mini D-Pad (Subtle in bottom-right corner) */
+.on-screen-dpad {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  opacity: 0.65;
+  transition: opacity 0.2s ease;
+  user-select: none;
+}
+
+.on-screen-dpad:hover {
+  opacity: 1;
+}
+
+.dpad-mid {
+  display: flex;
+  align-items: center;
+}
+
+.dpad-center {
+  width: 24px;
+  height: 24px;
+}
+
+.dpad-btn {
+  width: 28px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #F1F5F9;
+  border-radius: 6px;
+  font-size: 11px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+}
+
+.dpad-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.dpad-btn:active {
+  background: var(--color-teal);
+  transform: scale(0.92);
+}
+
+/* ==========================================================================
+   4 GAME ACTION BUTTONS (EXACT REFERENCE DESIGN)
+   ========================================================================== */
+.game-actions-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.btn-action {
+  border: none;
+  border-radius: 10px;
+  height: 48px;
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.btn-action:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.14);
+}
+
+.btn-action:active {
+  transform: translateY(0);
+}
+
+.btn-action:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-icon {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+}
+
+.key-hint {
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+/* Button 1: Enter Room (A) - Teal */
+.btn-enter {
+  background-color: var(--color-teal);
+}
+.btn-enter:hover {
+  background-color: var(--color-teal-hover);
+}
+
+/* Button 2: Exit Room (B) - Warm Amber */
+.btn-exit {
+  background-color: var(--color-amber);
+}
+.btn-exit:hover {
+  background-color: var(--color-amber-hover);
+}
+
+/* Button 3: Finish (F) - Purple */
+.btn-finish {
+  background-color: var(--color-purple);
+}
+.btn-finish:hover {
+  background-color: var(--color-purple-hover);
+}
+
+/* Button 4: Reset (R) - Slate */
+.btn-reset {
+  background-color: var(--color-slate);
+}
+.btn-reset:hover {
+  background-color: var(--color-slate-hover);
+}
+
+.panel-footer-hint {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ==========================================================================
+   RIGHT PANEL: PDA SIMULATOR
+   ========================================================================== */
+
+/* Top Metrics Row: 3 Equal Cards */
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.metric-card {
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 84px;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.metric-label {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.metric-val-large {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.1;
+  font-family: var(--font-mono);
+}
+
+/* Card 1: Current State */
+.metric-cyan {
+  background-color: var(--cyan-card-bg);
+  border-color: var(--cyan-card-border);
+}
+.metric-cyan .metric-label {
+  color: #0369A1;
+}
+.metric-cyan .metric-val-large {
+  color: #0284C7;
+}
+
+/* Card 2: Current Input */
+.metric-grey {
+  background-color: var(--grey-card-bg);
+  border-color: var(--grey-card-border);
+}
+.metric-grey .metric-label {
+  color: #64748B;
+}
+.metric-grey .metric-val-large {
+  color: #1E293B;
+}
+
+/* Card 3: Latest Operation */
+.metric-amber {
+  background-color: var(--amber-card-bg);
+  border-color: var(--amber-card-border);
+}
+.metric-amber .metric-label {
+  color: #92400E;
+}
+.metric-amber .metric-val-large {
+  color: #B45309;
+  font-size: 18.5px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+/* ==========================================================================
+   PDA MIDDLE SECTION (STACK & TRANSITION/SEQUENCE)
+   ========================================================================== */
+.pda-mid-grid {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+/* Left: Stack Column */
+.stack-column-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.subcard-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1E293B;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.subcard-title .dim {
+  font-size: 11px;
+  font-weight: 400;
+  color: #64748B;
+}
+
+.stack-visual-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0;
+}
+
+.stack-top-pointer {
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748B;
+  white-space: nowrap;
+}
+
+.stack-brackets {
+  width: 68px;
+  border-left: 2px solid #94A3B8;
+  border-right: 2px solid #94A3B8;
+  border-bottom: 3px solid #64748B;
+  border-radius: 0 0 4px 4px;
+  padding: 4px 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 126px;
+  justify-content: flex-end;
+  background-color: #FAFBFD;
+}
+
+.stack-cell {
+  height: 26px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cell-amber {
+  background-color: #F59E0B;
+  color: #FFFFFF;
+  box-shadow: 0 1px 3px rgba(245, 158, 11, 0.3);
+}
+
+.cell-base {
+  background-color: #64748B;
+  color: #FFFFFF;
+  box-shadow: 0 1px 3px rgba(100, 116, 139, 0.3);
+}
+
+.cell-empty {
+  border: 1px dashed #CBD5E1;
+  background-color: #F8FAFC;
+  opacity: 0.6;
+}
+
+.stack-str-tag {
+  font-size: 12px;
+  color: #475569;
+  margin-top: 6px;
+  text-align: center;
+}
+
+.stack-str-tag strong {
+  color: #0F172A;
+  font-family: var(--font-mono);
+}
+
+/* Right: Transition Applied + Input Sequence */
+.rules-column-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rule-box, .sequence-box {
+  background-color: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+
+.math-formula {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: #1E293B;
+  background-color: #F8FAFC;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-top: 4px;
+  border: 1px solid #F1F5F9;
+  letter-spacing: 0.2px;
+}
+
+.sequence-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.seq-pill {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13.5px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  transition: all 0.2s ease;
+}
+
+.seq-pill.filled {
+  background-color: var(--color-teal);
+  color: #FFFFFF;
+  box-shadow: 0 2px 4px rgba(20, 138, 133, 0.25);
+  animation: popIn 0.2s ease;
+}
+
+.seq-pill.empty {
+  background-color: #F1F5F9;
+  color: #94A3B8;
+  border: 1px solid #E2E8F0;
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.7); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ==========================================================================
+   TRANSITION HISTORY TABLE
+   ========================================================================== */
+.history-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.history-table-container {
+  overflow-y: auto;
+  max-height: 155px;
+  margin-top: 6px;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+.history-table th {
+  text-align: left;
+  padding: 6px 8px;
+  font-weight: 600;
+  color: #64748B;
+  border-bottom: 1px solid #CBD5E1;
+  background-color: #FFFFFF;
+  position: sticky;
+  top: 0;
+}
+
+.history-table td {
+  padding: 6px 8px;
+  color: #1E293B;
+  border-bottom: 1px solid #F1F5F9;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.history-table tr:hover td {
+  background-color: #F8FAFC;
+}
+
+.history-table .col-step {
+  font-weight: 700;
+  color: #64748B;
+}
+
+.history-table .col-push {
+  font-weight: 700;
+  color: #0D9488;
+}
+
+.history-table .col-pop {
+  font-weight: 700;
+  color: #D97706;
+}
+
+.history-table .col-accept {
+  font-weight: 700;
+  color: #6366F1;
+}
+
+.history-table .col-rejected {
+  font-weight: 700;
+  color: #DC2626;
+}
+
+/* ==========================================================================
+   REJECTION FLOATING ALERT TOAST
+   ========================================================================== */
+.rejection-alert {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  max-width: 440px;
+  background: #FFFFFF;
+  border-left: 4px solid #DC2626;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  padding: 12px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  transform: translateY(120px);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1000;
+}
+
+.rejection-alert.show {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.alert-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.alert-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #991B1B;
+}
+
+.alert-text {
+  font-size: 12px;
+  color: #475569;
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+.alert-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #94A3B8;
+  cursor: pointer;
+  margin-left: auto;
+  line-height: 1;
+}
+.alert-close:hover {
+  color: #1E293B;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .main-container {
+    flex-direction: column;
+  }
+  .panel-game, .panel-pda {
+    flex: 1;
+    width: 100%;
+  }
+}
